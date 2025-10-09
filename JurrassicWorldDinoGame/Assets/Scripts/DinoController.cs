@@ -24,6 +24,18 @@ public class DinoController : MonoBehaviour
 
     void Jump()
     {
-        rb.linearVelocityY = rb.linearVelocityY * jumpForce;
+        rb.linearVelocityY = jumpForce;
+        isGrounded = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            if (gameManager != null)
+            {
+                gameManager.GameOver();
+            }
+        }
     }
 }
