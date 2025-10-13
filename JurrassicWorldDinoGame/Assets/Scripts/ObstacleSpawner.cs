@@ -12,4 +12,14 @@ public class ObstacleSpawner : MonoBehaviour
     {
         
     }
+
+    public void StopSpawning()
+    {
+
+    }
+
+    public void IncreaseSpeed()
+    {
+
+    }
 }
