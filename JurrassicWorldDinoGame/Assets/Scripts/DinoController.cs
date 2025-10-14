@@ -13,7 +13,6 @@ public class DinoController : MonoBehaviour
         gameManager = FindFirstObjectByType<GameManager>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
@@ -26,6 +25,11 @@ public class DinoController : MonoBehaviour
     {
         rb.linearVelocityY = jumpForce;
         isGrounded = false;
+    }
+
+    void Duck()
+    {
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
