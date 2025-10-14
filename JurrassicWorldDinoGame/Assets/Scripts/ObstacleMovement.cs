@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class ObstacleMovement : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public float speed = 5f;
+
     void Start()
     {
         
@@ -11,6 +12,14 @@ public class ObstacleMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //move the obstacle to the left
+        transform.Translate(Vector3.left * speed * Time.deltaTime);
+
+        //destroy obstacle when it goes off screen
+        if (transform.position.x < -12f)
+        {
+            Destroy(gameObject);
+        }
+
     }
 }
