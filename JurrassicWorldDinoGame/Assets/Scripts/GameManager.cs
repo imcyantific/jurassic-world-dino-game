@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using TMPro;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -6,13 +8,13 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-    public Text scoreText;
-    public Text levelText;
-    public Text gameOverText;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI levelText;
+    public TextMeshProUGUI gameOverText;
     public GameObject gameOverPanel;
     public GameObject leaderboardPanel;
-    public Text leaderboardText;
-    public InputField nameField;
+    public TextMeshProUGUI leaderboardText;
+    public TMP_InputField nameField;
 
     private int score = 0;
     private int currentLevel = 1;
@@ -20,7 +22,7 @@ public class GameManager : MonoBehaviour
     private ObstacleSpawner spawner;
 
     private int[] levelGoals = { 0, 500, 1000, 2000, 3000 };
-    private List<HighScore> highScores = new List<HighScore>();
+    private static List<HighScore> highScores = new List<HighScore>();
 
     void Start()
     {
@@ -30,7 +32,6 @@ public class GameManager : MonoBehaviour
         InvokeRepeating("IncrementScore", 0.1f, 0.1f);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (isGameActive)
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
         {
             score += 1;
             scoreText.text = "Score: " + score;
+            levelText.text = "Level: " + currentLevel;
         }
     }
 
@@ -70,72 +72,45 @@ public class GameManager : MonoBehaviour
         isGameActive = false;
         CancelInvoke("IncrementScore");
         spawner.StopSpawning();
-        gameOverText.text = "Game Over!\n Score: " + score + "\nLevel: " + currentLevel;
+        gameOverText.text = "Score: " + score + "\nLevel: " + currentLevel;
         gameOverPanel.SetActive(true);
-
-        if (IsHighScore(score))
-        {
-            nameField.gameObject.SetActive(true);
-        }
+        nameField.gameObject.SetActive(true);
     }
 
     public void SaveHighScore()
     {
         string playerName = nameField.text;
         if (string.IsNullOrEmpty(playerName)) playerName = "Player";
+        highScores.Add(new HighScore (playerName, currentLevel, score));
         highScores.Sort((a, b) => b.score.CompareTo(a.score));
 
         if (highScores.Count > 10)
         {
             highScores.RemoveRange(10, highScores.Count - 10);
         }
-        SaveHighScore();
+
+        UpdateLeaderBoard();
+        nameField.text = "";
         nameField.gameObject.SetActive(false);
-    }
-    
-    bool IsHighScore(int score)
-    {
-        if (highScores.Count < 10) return true;
-        return score > highScores[highScores.Count - 1].score;
     }
 
     public void ShowLeaderboard()
     {
-        leaderboardPanel.SetActive(!leaderboardPanel.activeSelf);
+        gameOverPanel.SetActive(false);
+        leaderboardPanel.SetActive(true);
         UpdateLeaderBoard();
     }
 
     void UpdateLeaderBoard()
     {
-        leaderboardText.text = "TOP 10 HIGH SCORES\n\n";
-        for (int i = 0; i< highScores.Count; i++)
-        {
-            leaderboardText.text += (i + 1) + ". " + highScores[i].name + " - Score: " + highScores[i].score + " - Level: " + highScores[i].level;
-        }
-    }
-
-    void SaveHighScores()
-    {
+        string leaderboardDisplay = "";
         for (int i = 0; i < highScores.Count; i++)
         {
-            PlayerPrefs.SetString("HighScoreName" + i, highScores[i].name);
-            PlayerPrefs.SetInt("HighScoreValue" + i, highScores[i].score);
-            PlayerPrefs.SetInt("HighScoreLevel" + i, highScores[i].level);
+            leaderboardDisplay += (i + 1) + ". " + highScores[i].name +
+                                  "                   Score: " + highScores[i].score +
+                                  "  Level: " + highScores[i].level + "\n";
         }
-        PlayerPrefs.SetInt("HighScoreCount", highScores.Count);
-        PlayerPrefs.Save();
-    }
-
-    void LoadHighScores()
-    {
-        int count = PlayerPrefs.GetInt("HighScoreCount", 0);
-        for (int i = 0; i < count; i++)
-        {
-            string name = PlayerPrefs.GetString("HighScoreName" + i, "Player");
-            int scoreValue = PlayerPrefs.GetInt("HighScoreValue" + i, 0);
-            int level = PlayerPrefs.GetInt("HighScoreLevel" + i, 1);
-            highScores.Add(new HighScore(name, scoreValue, level));
-        }
+        leaderboardText.text = leaderboardDisplay;
     }
 
     public void RestartGame()
@@ -143,8 +118,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
-
-[System.Serializable]
 public class HighScore
 {
     public string name;
