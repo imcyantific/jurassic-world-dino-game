@@ -15,11 +15,13 @@ public class GameManager : MonoBehaviour
     public GameObject leaderboardPanel;
     public TextMeshProUGUI leaderboardText;
     public TMP_InputField nameField;
+    public UnityEngine.UI.Button saveScoreButton;
 
     private int score = 0;
     private int currentLevel = 1;
     private bool isGameActive = true;
     private ObstacleSpawner spawner;
+    private DinoController dinoSAUR;
 
     private int[] levelGoals = { 0, 500, 1000, 2000, 3000 };
     private static List<HighScore> highScores = new List<HighScore>();
@@ -29,6 +31,7 @@ public class GameManager : MonoBehaviour
         spawner = FindFirstObjectByType<ObstacleSpawner>();
         gameOverPanel.SetActive(false);
         leaderboardPanel.SetActive(false);
+        dinoSAUR = GameObject.Find("Dino").GetComponent<DinoController>();
         InvokeRepeating("IncrementScore", 0.1f, 0.1f);
     }
 
@@ -70,6 +73,9 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         isGameActive = false;
+
+        dinoSAUR.Die();
+
         CancelInvoke("IncrementScore");
         spawner.StopSpawning();
         gameOverText.text = "Score: " + score + "\nLevel: " + currentLevel;
@@ -79,6 +85,7 @@ public class GameManager : MonoBehaviour
 
     public void SaveHighScore()
     {
+        saveScoreButton.enabled = false;
         string playerName = nameField.text;
         if (string.IsNullOrEmpty(playerName)) playerName = "Player";
         highScores.Add(new HighScore (playerName, currentLevel, score));
