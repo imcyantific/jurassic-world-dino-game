@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using TMPro.EditorUtilities;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -120,9 +121,28 @@ public class GameManager : MonoBehaviour
         leaderboardText.text = leaderboardDisplay;
     }
 
+    public void StartGame()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
+
+    public void QuitGame()
+    {
+        #if UNITY_EDITOR
+                EditorApplication.isPlaying = false;
+        #else
+                    Application.Quit();
+        #endif 
+    }
+
+    public void CloseGame()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("GameScene");
     }
 }
 public class HighScore
