@@ -121,20 +121,6 @@ public class GameManager : MonoBehaviour
         leaderboardText.text = leaderboardDisplay;
     }
 
-    public void StartGame()
-    {
-        SceneManager.LoadScene("GameScene");
-    }
-
-    public void QuitGame()
-    {
-        #if UNITY_EDITOR
-                EditorApplication.isPlaying = false;
-        #else
-                    Application.Quit();
-        #endif 
-    }
-
     public void CloseGame()
     {
         SceneManager.LoadScene("MainMenu");
