@@ -4,7 +4,8 @@ public class ObstacleSpawner : MonoBehaviour
 {
     public GameObject groundObstaclePrefab;
     public GameObject flyingObstaclePrefab;
-    public float spawnInterval = 2f;
+    public float spawnInterval = 1.75f;
+    public float spawnVariance = 0.25f;
     public float obstacleSpeed = 5f;
     public float spawnX = 10f;
     public float groundSpawnY = -5f;
@@ -22,7 +23,7 @@ public class ObstacleSpawner : MonoBehaviour
         if (Time.time >= nextSpawnTime)
         {
             SpawnObstacle();
-            nextSpawnTime = Time.time + spawnInterval;
+            nextSpawnTime = Time.time + spawnInterval + Random.Range(-spawnVariance, spawnVariance);
         }
     }
 
